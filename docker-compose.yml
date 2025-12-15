@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  etl-service:
+    build: .
+    container_name: etl_container
+    volumes:
+      - ./etl:/etl
+      - ./data:/data:ro

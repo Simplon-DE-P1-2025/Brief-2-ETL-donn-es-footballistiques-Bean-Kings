@@ -6,4 +6,4 @@ WORKDIR /etl
 
 COPY etl /etl
 
-CMD ["python", "main.py"]
+CMD ["bash"]

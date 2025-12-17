@@ -92,3 +92,15 @@ print(df.describe(include='all'))
 
 df = df.drop(columns=["Year", "Stadium", "Attendance", "Half-time Home Goals", "Half-time Away Goals", "Referee", "Assistant 1", "Assistant 2","RoundID"  ,  "MatchID","Home Team Initials", "Away Team Initials"])
 
+df["Datetime"] = pd.to_datetime(
+    df["Datetime"],
+    errors="coerce")
+
+df["Home Team Goals"] = pd.to_numeric(
+    df["Home Team Goals"],
+    errors="coerce"
+)
+df["Away Team Goals"] = pd.to_numeric(
+    df["Away Team Goals"],
+    errors="coerce"
+)

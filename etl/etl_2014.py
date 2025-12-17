@@ -106,3 +106,29 @@ df["Away Team Goals"] = pd.to_numeric(
 )
 
 df = df.drop_duplicates(df)
+
+df["Win conditions"] = df["Win conditions"].str.strip().str.replace(" ", "")
+df["Win conditions"] = df["Win conditions"].str.extract(r"(\d+-\d+)")
+df[["Score home", "Score away"]] = df["Win conditions"].str.split("-", expand=True).astype("Int64") 
+df_win = df[
+    df["Win conditions"]
+      .notna()
+    & df["Win conditions"].str.strip().ne("")
+]
+
+df["Home result"] = "draw"
+df["Away result"] = "draw"
+
+home_win = df["Home Team Goals"] > df["Away Team Goals"]
+away_win = df["Away Team Goals"] > df["Home Team Goals"]
+
+df.loc[home_win, ["Home result", "Away result"]] = ["winner", "loser"]
+df.loc[away_win, ["Home result", "Away result"]] = ["loser", "winner"]
+
+draw = df["Home Team Goals"] == df["Away Team Goals"]
+
+df.loc[draw & (df["Score home"] > df["Score away"]),
+       ["Home result", "Away result"]] = ["winner", "loser"]
+
+df.loc[draw & (df["Score away"] > df["Score home"]),
+       ["Home result", "Away result"]] = ["loser", "winner"]

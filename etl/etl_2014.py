@@ -104,3 +104,5 @@ df["Away Team Goals"] = pd.to_numeric(
     df["Away Team Goals"],
     errors="coerce"
 )
+
+df = df.drop_duplicates(df)

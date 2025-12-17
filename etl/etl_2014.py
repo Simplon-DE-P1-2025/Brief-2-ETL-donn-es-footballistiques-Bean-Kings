@@ -74,3 +74,21 @@ def normalize_stage(stage):
     key = key.replace("_", " ").replace("-", " ")
 
     return STAGE_MAP.get(key, key)
+
+def normalize_country(name):
+    if pd.isna(name) or str(name).strip() == "":
+        logger.warning("Pays manquant → unknown")
+        return "unknown"
+
+    key = unidecode(str(name)).lower().strip()
+
+    if key in COUNTRY_FIX_MAP:
+        return COUNTRY_FIX_MAP[key]
+
+    logger.warning("Pays hors référentiel officiel : %s", name)
+    return key
+
+print(df.describe(include='all'))
+
+df = df.drop(columns=["Year", "Stadium", "Attendance", "Half-time Home Goals", "Half-time Away Goals", "Referee", "Assistant 1", "Assistant 2","RoundID"  ,  "MatchID","Home Team Initials", "Away Team Initials"])
+

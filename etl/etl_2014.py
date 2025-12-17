@@ -51,3 +51,17 @@ def clean_text(value, default="Unknown"):
     value = str(value).strip().lower()
     value = unidecode(value)
     return value
+
+def city_to_english(city):
+    if pd.isna(city) or str(city).strip() == "":
+        logger.warning("Ville manquante")
+        return "unknown"
+
+    city_clean = unidecode(str(city)).lower().strip()
+
+    for c in cities.values():
+        c_name = unidecode(c["name"]).lower().strip()
+        if c_name == city_clean:
+            return c_name
+
+    return city_clean 

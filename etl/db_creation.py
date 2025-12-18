@@ -10,7 +10,7 @@ CREATE TABLE Teams (
 
 CREATE TABLE MatchTime (
     time_id UUID PRIMARY KEY,
-    date_ DATE,
+    date_ TIMESTAMP,
     day_ INTEGER,
     month_ INTEGER,
     year_ INTEGER

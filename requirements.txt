@@ -2,3 +2,6 @@ pandas
 numpy
 duckdb
 requests
+unidecode
+geonamescache
+logging

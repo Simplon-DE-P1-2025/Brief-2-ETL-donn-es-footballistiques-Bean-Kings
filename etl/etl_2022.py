@@ -20,7 +20,7 @@ def get_cleaned_2022_data() -> pd.DataFrame:
 
     # --- 1. CONFIGURATION (Relative Paths) ---
     # We assume the script is run from a root directory that contains a 'data' folder
-    data_base_dir = "./data"
+    data_base_dir = "./../data"
     
     file1_path = os.path.join(data_base_dir, "WorldCupMatches2022.csv")
     file2_path = os.path.join(data_base_dir, "WorldCupMatches2022-venue.csv")

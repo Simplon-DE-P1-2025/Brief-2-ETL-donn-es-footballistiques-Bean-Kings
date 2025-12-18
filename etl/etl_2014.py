@@ -1,38 +1,37 @@
 import duckdb
-import etl.etl_inserter_2014 as inserter
 import pandas as pd
 from unidecode import unidecode
 import geonamescache
 import logging
 
+logger = logging.getLogger("ETL")
+
+
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
 
 gc = geonamescache.GeonamesCache()
-df = pd.read_csv('./data/WorldCupMatches2014.csv', sep=";", encoding='iso-8859-1') 
-logger = logging.getLogger("ETL")
-
 cities =  gc.get_cities()
 countries = gc.get_countries()
 
 STAGE_MAP = {
-    "group a": "group",
-    "group b": "group",
-    "group c": "group",
-    "group d": "group",
-    "group e": "group",
-    "group f": "group",
-    "group g": "group",
-    "group h": "group",
-    "round16": "round of 16",
-    "round of 16": "round of 16",
-    "quarter-finals": "quarter-final",
-    "quarter-final": "quarter-final",
-    "semi-finals": "semi-final",
-    "semi-final": "semi-final",
-    "final": "final",
-    "play-off for third place": "play-off for third place",
-}
+        "group a": "group",
+        "group b": "group",
+        "group c": "group",
+        "group d": "group",
+        "group e": "group",
+        "group f": "group",
+        "group g": "group",
+        "group h": "group",
+        "round16": "round of 16",
+        "round of 16": "round of 16",
+        "quarter-finals": "quarter-final",
+        "quarter-final": "quarter-final",
+        "semi-finals": "semi-final",
+        "semi-final": "semi-final",
+        "final": "final",
+        "play-off for third place": "play-off for third place",
+    }
 
 COUNTRY_FIX_MAP = {
     'rn">bosnia and herzegovina': "bosnia and herzegovina",
@@ -87,59 +86,58 @@ def normalize_country(name):
 
     logger.warning("Pays hors référentiel officiel : %s", name)
     return key
+def get_cleaned_2014_data():
+    
+    df = pd.read_csv('./data/WorldCupMatches2014.csv', sep=";", encoding='iso-8859-1') 
+    df = df.drop(columns=["Year", "Stadium", "Attendance", "Half-time Home Goals", "Half-time Away Goals", "Referee", "Assistant 1", "Assistant 2","RoundID"  ,  "MatchID","Home Team Initials", "Away Team Initials"])
 
-print(df.describe(include='all'))
+    df["Datetime"] = pd.to_datetime(
+        df["Datetime"],
+        errors="coerce")
 
-df = df.drop(columns=["Year", "Stadium", "Attendance", "Half-time Home Goals", "Half-time Away Goals", "Referee", "Assistant 1", "Assistant 2","RoundID"  ,  "MatchID","Home Team Initials", "Away Team Initials"])
+    df["Home Team Goals"] = pd.to_numeric(
+        df["Home Team Goals"],
+        errors="coerce"
+    )
+    df["Away Team Goals"] = pd.to_numeric(
+        df["Away Team Goals"],
+        errors="coerce"
+    )
 
-df["Datetime"] = pd.to_datetime(
-    df["Datetime"],
-    errors="coerce")
+    df = df.drop_duplicates(df)
 
-df["Home Team Goals"] = pd.to_numeric(
-    df["Home Team Goals"],
-    errors="coerce"
-)
-df["Away Team Goals"] = pd.to_numeric(
-    df["Away Team Goals"],
-    errors="coerce"
-)
+    df["Win conditions"] = df["Win conditions"].str.strip().str.replace(" ", "")
+    df["Win conditions"] = df["Win conditions"].str.extract(r"(\d+-\d+)")
+    df[["Score home", "Score away"]] = df["Win conditions"].str.split("-", expand=True).astype("Int64") 
+    df_win = df[
+        df["Win conditions"]
+        .notna()
+        & df["Win conditions"].str.strip().ne("")
+    ]
 
-df = df.drop_duplicates(df)
+    df["Home Result"] = "draw"
+    df["Away Result"] = "draw"
 
-df["Win conditions"] = df["Win conditions"].str.strip().str.replace(" ", "")
-df["Win conditions"] = df["Win conditions"].str.extract(r"(\d+-\d+)")
-df[["Score home", "Score away"]] = df["Win conditions"].str.split("-", expand=True).astype("Int64") 
-df_win = df[
-    df["Win conditions"]
-      .notna()
-    & df["Win conditions"].str.strip().ne("")
-]
+    home_win = df["Home Team Goals"] > df["Away Team Goals"]
+    away_win = df["Away Team Goals"] > df["Home Team Goals"]
 
-df["Home result"] = "draw"
-df["Away result"] = "draw"
+    df.loc[home_win, ["Home Result", "Away Result"]] = ["winner", "loser"]
+    df.loc[away_win, ["Home Result", "Away Result"]] = ["loser", "winner"]
 
-home_win = df["Home Team Goals"] > df["Away Team Goals"]
-away_win = df["Away Team Goals"] > df["Home Team Goals"]
+    draw = df["Home Team Goals"] == df["Away Team Goals"]
 
-df.loc[home_win, ["Home result", "Away result"]] = ["winner", "loser"]
-df.loc[away_win, ["Home result", "Away result"]] = ["loser", "winner"]
+    df.loc[draw & (df["Score home"] > df["Score away"]),
+        ["Home Result", "Away Result"]] = ["winner", "loser"]
 
-draw = df["Home Team Goals"] == df["Away Team Goals"]
+    df.loc[draw & (df["Score away"] > df["Score home"]),
+        ["Home Result", "Away Result"]] = ["loser", "winner"]
+    df = df.drop(columns=["Win conditions", "Score home", "Score away"])
 
-df.loc[draw & (df["Score home"] > df["Score away"]),
-       ["Home result", "Away result"]] = ["winner", "loser"]
+    df["Stage"] = df["Stage"].apply(normalize_stage)
 
-df.loc[draw & (df["Score away"] > df["Score home"]),
-       ["Home result", "Away result"]] = ["loser", "winner"]
-df = df.drop(columns=["Win conditions", "Score home", "Score away"])
+    df["City"] = df["City"].apply(city_to_english)
 
-df["Stage"] = df["Stage"].apply(normalize_stage)
+    df["Home Team Name"] = df["Home Team Name"].apply(normalize_country)
+    df["Away Team Name"] = df["Away Team Name"].apply(normalize_country)
 
-df["City"] = df["City"].apply(city_to_english)
-
-df["Home Team Name"] = df["Home Team Name"].apply(normalize_country)
-df["Away Team Name"] = df["Away Team Name"].apply(normalize_country)
-
-print(df)
-inserter.load_matches(df, db_path="./db/db.duckdb")
+    return df

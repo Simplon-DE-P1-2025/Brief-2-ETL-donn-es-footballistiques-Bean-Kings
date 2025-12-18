@@ -35,3 +35,5 @@ Pour interagir avec l'application :
 ```sh
 docker compose up --build
 ```
+### Kpi
+Les kpi sont trouvable dans le rapport bi joint (dossier asset)

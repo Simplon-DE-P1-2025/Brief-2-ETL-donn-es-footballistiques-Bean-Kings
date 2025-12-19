@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from unidecode import unidecode
 import os
 
@@ -30,6 +31,10 @@ def get_cleaned_2018_data(json_file_path):
     Extrait, Transforme et Nettoie les données du JSON 2018.
     Retourne un DataFrame Pandas prêt pour l'analyse.
     """
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+    DATA_DIR = PROJECT_ROOT / "data"
+    json_file_path = DATA_DIR / "data_2018.json"
+
     print(f"Traitement du fichier : {json_file_path}")
     
     # 1. EXTRACTION

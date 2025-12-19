@@ -95,7 +95,7 @@ TRUNCATE TABLE Rounds;
 TRUNCATE TABLE Teams;
 """
 
-def load_matches(df, db_path="./db/db.duckdb"):
+def load_matches(df, db_path="./../db/db.duckdb"):
     con = duckdb.connect(db_path)
     con.register("staging_matches", df)
     con.execute(TRUNCATE_ALL)

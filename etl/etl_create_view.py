@@ -35,7 +35,7 @@ JOIN Teams ta ON ta.team_id = pa.team_id;
 """
 
 
-def create_view(df, db_path="./db/db.duckdb"):
+def create_view(db_path="./../db/db.duckdb"):
     con = duckdb.connect(db_path)
     con.execute(VIEW)
     con.commit()

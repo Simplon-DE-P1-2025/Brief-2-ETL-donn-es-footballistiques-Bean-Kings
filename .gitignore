@@ -3,3 +3,4 @@ temp.py
 etl_worldcup.log
 db/
 __pycache__/
+!db/.gitkeep

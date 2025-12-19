@@ -4,8 +4,8 @@ from unidecode import unidecode
 # =========================
 # CONFIGURATION
 # =========================
-INPUT_FILE = "./data/WorldCupMatches1930-2010.csv"
-DATETIME_FILE = "./data/WorldCupMatches1930-2022-datetime.csv"
+INPUT_FILE = "./../data/WorldCupMatches1930-2010.csv"
+DATETIME_FILE = "./../data/WorldCupMatches1930-2022-datetime.csv"
 
 # =========================
 # FONCTIONS UTILITAIRES

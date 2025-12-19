@@ -4,8 +4,6 @@ services:
   etl-service:
     build: .
     container_name: etl_container
-    stdin_open: true
-    tty: true
     volumes:
       - ./etl:/etl
       - ./data:/data:ro

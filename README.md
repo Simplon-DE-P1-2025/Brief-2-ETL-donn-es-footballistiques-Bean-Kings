@@ -29,32 +29,11 @@ L'application se lance avec docker. Deux volumes sont créés
 - un premier pour les fichiers csv et json a utiliser comme source de données
 - un second pour les stocker les donnes de la base de données
 Pour interagir avec l'application : 
-0. s'assurer que docker est installé : [télécharger docker](https://docs.docker.com/desktop/)
-1. cloner ce repository
-2. dans le terminal entrer la commande suivante pour demarrer le service en mode détaché
+1. s'assurer que docker est installé : [télécharger docker](https://docs.docker.com/desktop/)
+2. cloner ce repository
+3. dans le terminal entrer la commande suivante pour demarrer le service (lance le script main.py et peuple la base de données avec les data transformées)
 ```sh
-docker compose up --build -d
+docker compose up --build
 ```
-3. puis pour ouvrir un terminal interactif utilser la commande suivante : 
-```sh
-docker exec -it etl_container bash 
-```
-4. vous pouvez alors utilser les scripts en appelant directement le fichier concerné (exemple ici, le fichier help.py qui sert à lister les options possibles)
-```sh
-python help.py
-```
-### Commandes bonus
-5. sortir du terminal interractif
-```sh
-exit
-```
-6. redémarrer l'etl
-``` 
-docker compose restart
-```
-7. stopper l'etl 
-```sh
-docker compose down
-# ou pour arreter le service, et effacer les images
-docker compose down -v
-```
+### Kpi
+Les kpi sont trouvable dans le rapport bi joint (dossier asset)

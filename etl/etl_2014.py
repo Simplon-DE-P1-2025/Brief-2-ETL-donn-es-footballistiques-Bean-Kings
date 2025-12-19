@@ -88,7 +88,7 @@ def normalize_country(name):
     return key
 def get_cleaned_2014_data():
     
-    df = pd.read_csv('./data/WorldCupMatches2014.csv', sep=";", encoding='iso-8859-1') 
+    df = pd.read_csv('./../data/WorldCupMatches2014.csv', sep=";", encoding='iso-8859-1') 
     df = df.drop(columns=["Year", "Stadium", "Attendance", "Half-time Home Goals", "Half-time Away Goals", "Referee", "Assistant 1", "Assistant 2","RoundID"  ,  "MatchID","Home Team Initials", "Away Team Initials"])
 
     df["Datetime"] = pd.to_datetime(

@@ -66,7 +66,7 @@ def get_cleaned_2022_data() -> pd.DataFrame:
     print("--- STARTING 2022 ETL PROCESS ---")
 
     # A. Configuration
-    data_base_dir = "./data" # Adjust this path as needed
+    data_base_dir = "./../data" # Adjust this path as needed
     
     file1_path = os.path.join(data_base_dir, "WorldCupMatches2022.csv")
     file2_path = os.path.join(data_base_dir, "WorldCupMatches2022-venue.csv")

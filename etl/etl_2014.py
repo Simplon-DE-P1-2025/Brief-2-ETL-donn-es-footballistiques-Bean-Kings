@@ -104,7 +104,7 @@ def get_cleaned_2014_data():
         errors="coerce"
     )
 
-    df = df.drop_duplicates(df)
+    df = df.drop_duplicates()
 
     df["Win conditions"] = df["Win conditions"].str.strip().str.replace(" ", "")
     df["Win conditions"] = df["Win conditions"].str.extract(r"(\d+-\d+)")

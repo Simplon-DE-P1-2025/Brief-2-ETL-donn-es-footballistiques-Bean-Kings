@@ -4,6 +4,7 @@ import etl_create_view as etl_view
 import etl_2014 as etl_2014
 import etl_2018 as etl_2018
 import etl_2022 as etl_2022
+import db_creation as db_creator
 import pandas as pd
 
 
@@ -17,5 +18,6 @@ def merge_data():
     print(big_df.info())
     return big_df
 
+db_creator.create_db_schema()
 inserter.load_matches(merge_data())
 etl_view.create_view()

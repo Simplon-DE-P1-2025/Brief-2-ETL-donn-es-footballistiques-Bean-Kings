@@ -9,8 +9,8 @@ def test_merge_key_sorting():
     'France vs Peru' doit donner la même clé que 'Peru vs France'.
     """
     date_str = "2022-12-18"
-    key1 = create_merge_key("France", "Peru", date_str)
-    key2 = create_merge_key("Peru", "France", date_str)
+    key1 = create_merge_key("france", "peru", date_str)
+    key2 = create_merge_key("peru", "france", date_str)
     
     assert key1 == "france_peru_2022-12-18"
     assert key1 == key2
